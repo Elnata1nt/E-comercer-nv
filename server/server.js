@@ -2,12 +2,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cookieParse = require("cookie-parser");
 const cors = require("cors")
+const authRouter = require('./routes/auth/auth-routes')
 
 
 mongoose
 .connect("mongodb+srv://elnatacorrea:N%40tan1861@cluster0.nzzjo.mongodb.net/")
 .then(() => console.log("MongoDB connected"))
-.catch((error) => console.log("error connecting to MoongoDB"));
+.catch((error) => console.log(error));
 
 
 const app = express()
@@ -30,5 +31,6 @@ app.use(
 
 app.use(cookieParse());
 app.use(express.json());
+app.use('/api/auth', authRouter)
 
 app.listen(PORT, () => console.log(`Server is now running on port ${PORT}`));
