@@ -11,15 +11,19 @@ export const registerUser = createAsyncThunk(
   "/auth/register",
 
   async (formData) => {
-    const response = await axios.post(
-      "http://localhost:5172/api/auth/register",
-      formData,
-      {
-        withCredentials: true,
-      }
-    );
-
-    return response.data;
+    try {
+      const response = await axios.post(
+        "http://localhost:5172/api/auth/register",
+        formData,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error during registration:", error.response ? error.response.data : error.message);
+      throw error; 
+    }
   }
 );
 
