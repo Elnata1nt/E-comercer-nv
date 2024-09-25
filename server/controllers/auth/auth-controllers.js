@@ -26,6 +26,7 @@ const registerUser = async (req, res) => {
       message: "Some error occured",
     });
   }
+  
 };
 
 //login
