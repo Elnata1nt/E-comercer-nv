@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from 'axios';
+import axios from "axios";
 
 const initialState = {
   isAuthenticated: false,
@@ -21,8 +21,34 @@ export const registerUser = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      console.error("Error during registration:", error.response ? error.response.data : error.message);
-      throw error; 
+      console.error(
+        "Error during registration:",
+        error.response ? error.response.data : error.message
+      );
+      throw error;
+    }
+  }
+);
+
+export const loginUser = createAsyncThunk(
+  "/auth/login",
+
+  async (formData) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5172/api/auth/login",
+        formData,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error during registration:",
+        error.response ? error.response.data : error.message
+      );
+      throw error;
     }
   }
 );
@@ -44,6 +70,21 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
       })
       .addCase(registerUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.user = null;
+        state.isAuthenticated = false;
+      })
+      .addCase(loginUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        console.log(action);
+
+        state.isLoading = false;
+        state.user = action.payload.success ? action.payload.user : null;
+        state.isAuthenticated = action.payload.success ? true : false;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;

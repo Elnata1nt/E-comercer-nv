@@ -3,22 +3,34 @@ import { Navigate, useLocation } from "react-router-dom";
 function CheckAuth({ isAuthenticated, user, children }) {
   const location = useLocation();
 
-  // Verifica se o usuário não está autenticado e tenta acessar qualquer página que não seja login ou registro
+  console.log(location.pathname, isAuthenticated);
+
+  if (location.pathname === "/") {
+    if (!isAuthenticated) {
+      return <Navigate to="/auth/login" />;
+    } else {
+      if (user?.role === "admin") {
+        return <Navigate to="/admin/dashboard" />;
+      } else {
+        return <Navigate to="/shop/home" />;
+      }
+    }
+  }
+
   if (
     !isAuthenticated &&
     !(
-      location.pathname.includes("/auth/login") ||
-      location.pathname.includes("/auth/register")
+      location.pathname.includes("/login") ||
+      location.pathname.includes("/register")
     )
   ) {
     return <Navigate to="/auth/login" />;
   }
 
-  // Se o usuário está autenticado e tenta acessar login ou registro, redireciona para o dashboard correspondente
   if (
     isAuthenticated &&
-    (location.pathname.includes("/auth/login") ||
-      location.pathname.includes("/auth/register"))
+    (location.pathname.includes("/login") ||
+      location.pathname.includes("/register"))
   ) {
     if (user?.role === "admin") {
       return <Navigate to="/admin/dashboard" />;
@@ -27,26 +39,23 @@ function CheckAuth({ isAuthenticated, user, children }) {
     }
   }
 
-  // Se o usuário não é admin e tenta acessar rotas administrativas
   if (
     isAuthenticated &&
     user?.role !== "admin" &&
-    location.pathname.includes("/admin")
+    location.pathname.includes("admin")
   ) {
-    return <Navigate to="/unauth-page" />; // Página de não autorizado ou outra rota
+    return <Navigate to="/unauth-page" />;
   }
 
-  // Se o usuário não é um cliente e tenta acessar rotas de shopping
   if (
     isAuthenticated &&
-    user?.role !== "admin" &&
-    location.pathname.includes("/shop")
+    user?.role === "admin" &&
+    location.pathname.includes("shop")
   ) {
-    return <Navigate to="/admin/dashboard" />; // Redireciona para o dashboard admin
+    return <Navigate to="/admin/dashboard" />;
   }
 
-  // Caso todas as verificações passem, renderiza os filhos (children)
-  return children;
+  return <>{children}</>;
 }
 
 export default CheckAuth;

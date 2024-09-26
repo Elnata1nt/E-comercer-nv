@@ -2,6 +2,7 @@ import CommonForm from "@/components/common/form";
 import { registerFormControls } from "@/config";
 import { useToast } from "@/hooks/use-toast";
 import { registerUser } from "@/store/auth-slice";
+import { Variable } from "lucide-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -25,8 +26,13 @@ function AuthRegister() {
         toast({
           title: data?.payload?.message,
         });
+        navigate("/auth/login");
+      } else {
+        toast({
+          title: data?.payload?.message,
+          variant: "destructive",
+        });
       }
-      navigate("/auth/login");
     });
   }
 
